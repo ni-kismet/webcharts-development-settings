@@ -1,0 +1,23 @@
+{ "name": "webcharts-development-settings",
+  "description": "Developer setting for webcharts",
+  "version": "0.0.1",
+  "scripts": {
+    "linter": "eslint ./*.js",
+    "build": "node ./node_modules/gulp/bin/gulp.js build"
+  },
+  "repository": {
+    "type": "git",
+    "url":  "git+https://github.com/ni-kismet/webcharts-development-settings.git" },
+  "author": "National Instruments Corporation",
+  "license": "https://www.ni.com/legal/license/",
+  "devDependencies": {
+    "eslint-config-standard": "^7.0.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-sequence": "^0.4.6",
+    "gulp-sourcemaps": "^2.4.0",
+    "gulp-uglify": "^2.0.0"
+  }
+}
