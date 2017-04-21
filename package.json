@@ -1,7 +1,7 @@
 {
   "name": "webcharts-development-settings",
   "description": "Developer setting for webcharts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "linter": "eslint ./*.js",
     "build": "node ./node_modules/gulp/bin/gulp.js build"
