@@ -105,6 +105,15 @@
         dispatchEvent(el, evt);
     }
 
+    function simulateClick(el, x, y, button) {
+        var bBox = el.getBoundingClientRect();
+        var clickX = bBox.left + x;
+        var clickY = bBox.top + y;
+
+        var evt = mouseEvent("click", clickX, clickY, clickX, clickY, button);
+        dispatchEvent(el, evt);
+    }
+
     function simulateTouchStart(el, x, y) {
         sendTouchEvent(x, y, el, "touchstart");
     }
@@ -196,4 +205,5 @@
     simulate.touchend = simulateTouchEnd;
     simulate.touchdrag = simulateTouchDrag;
     simulate.sendTouchEvents = sendTouchEvents;
+    simulate.click = simulateClick;
 })();
