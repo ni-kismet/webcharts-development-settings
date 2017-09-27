@@ -6,7 +6,7 @@
 
     var simulate = window.simulate;
 
-    function mouseEvent(type, sx, sy, cx, cy, button, detail) {
+    function mouseEvent(type, sx, sy, cx, cy, button, detail, key) {
         var evt;
         var e = {
             bubbles: true,
@@ -26,6 +26,18 @@
             button: button || 0,
             relatedTarget: undefined
         };
+
+        if (key === "ctrlKey") {
+            e.ctrlKey = true;
+        } else if (key === "altKey") {
+            e.altKey = true;
+        } else if (key === "shiftKey") {
+            e.shiftKey = true;
+        } else if (key === "shiftKey") {
+            e.shiftKey = true;
+        } else if (key === "metaKey") {
+            e.metaKey = true;
+        }
 
         if (typeof (document.createEvent) === "function") {
             evt = document.createEvent("MouseEvents");
@@ -105,12 +117,12 @@
         dispatchEvent(el, evt);
     }
 
-    function simulateClick(el, x, y, button) {
+    function simulateClick(el, x, y, button, key) {
         var bBox = el.getBoundingClientRect();
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("click", clickX, clickY, clickX, clickY, button);
+        var evt = mouseEvent("click", clickX, clickY, clickX, clickY, button, undefined, key);
         dispatchEvent(el, evt);
     }
 
