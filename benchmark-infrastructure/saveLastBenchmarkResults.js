@@ -1,8 +1,10 @@
 const fs = require('fs');
 
 const lastBenchmarkResults = JSON.parse(fs.readFileSync('lastBenchmarkResults.json'));
-const benchmarkResults = JSON.parse(fs.readFileSync('benchmarkResults.json'));
 console.log(lastBenchmarkResults);
+
+const benchmarkResultsExists = fs.existsSync('benchmarkResults.json');
+const benchmarkResults = benchmarkResultsExists ? JSON.parse(fs.readFileSync('benchmarkResults.json')) : [];
 
 const allResults = benchmarkResults.concat(lastBenchmarkResults);
 
