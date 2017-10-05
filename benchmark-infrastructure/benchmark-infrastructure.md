@@ -1,7 +1,7 @@
 # Benchmark infrastructure
 
 ## The goal
-The goal of this infrastructure is to provide a **minimum viable functionality** for tracking the performance while paying the **minimum cost** of developing and maintaining it.
+The goal of this infrastructure is to provide **minimum viable functionality** for tracking the performance while paying the **minimum cost** of developing and maintaining it.
 
 ## Features
 Supported features:
@@ -30,6 +30,19 @@ engineering-flot is used to present the trends.
 ### git
 The results are being saved in a json file which is commited with the code in the same repo. This is not ideal, but it's a very cheap mechanism to track the progress and detect regression. The workflow is meant to save new results only when the user decides to while he has the freedom to run the benchmarks and compare the results as often as he wants to.
 
+## Example
+Each benchmark result is a collection of key-value pairs like this:
+```js
+{
+  "hash": "771725e10b502a33584c909d9d5d859680c9305f",
+  "dateTime": "2017-10-03T14:40:45.187Z",
+  "browserFullName": "Firefox 55.0.0 (Windows 7 0.0.0)",
+  "browser": "Firefox",
+  "testName": "graph 10000_samples 1_plot line",
+  "value": "357.05998483482415",
+  "unit": "ops/sec"
+}
+```
 
 ## How tos
 
