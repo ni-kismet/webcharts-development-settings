@@ -12,7 +12,7 @@
 
     var orderedJsonContent = [];
 
-    $.getJSON('../../../../benchmarksResults.json', function(jsonContent) {
+    $.getJSON('../../../../benchmarkResults.json', function(jsonContent) {
         var allResults = orderedJsonContent.concat(jsonContent);
         allResults.sort(compareTests);
         orderedJsonContent = allResults;
@@ -22,7 +22,7 @@
 
     $.getJSON('../../../../lastBenchmarkResults.json')
     .success(function(jsonContent) {
-        $('#messagePlaceholder').html('Showing merged results from both <b>lastBenchmarkResults.json</b> and <b>benchmarksResults.json</b> files.');
+        $('#messagePlaceholder').html('Showing merged results from both <b>lastBenchmarkResults.json</b> and <b>benchmarkResults.json</b> files.');
         var allResults = orderedJsonContent.concat(jsonContent);
         allResults.sort(compareTests);
         orderedJsonContent = allResults;
@@ -30,7 +30,7 @@
         registerEvents();
     })
     .fail(function() {
-        $('#messagePlaceholder').html('File <b>lastBenchmarkResults.json</b> not found. Showing the saved results from <b>benchmarksResults.json</b> only.');
+        $('#messagePlaceholder').html('File <b>lastBenchmarkResults.json</b> not found. Showing the saved results from <b>benchmarkResults.json</b> only.');
     });
 
     function createChartData(orderedJsonContent) {
