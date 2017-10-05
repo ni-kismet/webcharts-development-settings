@@ -82,7 +82,7 @@ This command will run all the benchmarks in all the specified browsers and save 
 
 ### How to run the benchmarks on other devices/browsers and keep the results for comparison
 1. Start karma with this command:
-```
+```console
 npm run benchmarksInteractive
 ```
 This command is starting karma configured with no browsers. You can connect from any device or browser and run the benchmarks.
@@ -97,4 +97,8 @@ lastBenchmarkResults.json
 ```
 The text file contains the log of the browser intercepted by karma. The json file is generated after the karma was stopped and contains the benchmarks results parsed and nicely printed in the json format. Only the json file is meant to be used to view the results or save them.
 
-### How to compare the last 
+### How to compare the last results against the saved onses
+Open this file which will load and merge all the results:
+```bat
+node_modules/webcharts-development-settings/benchmark-infrastructure/benchmarkViewer.html
+```
