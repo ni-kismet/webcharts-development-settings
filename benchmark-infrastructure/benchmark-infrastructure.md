@@ -19,38 +19,41 @@ Features that are not supported and will not be supported in the near future:
 
 ## Overview
 In order to pay the minimum cost by writing as few lines of code as possible other existing tools have been wired together:
-1. Benchmark.js
+### Benchmark.js
 This library is great running a series of benchmarks and returning  statistically significant results. But it lacks support for running the benchmarks selectively. The user of this framework doesn't have to deal with this library directly.
-2. Jasmine
+### Jasmine
 The way Jasmine displays the tests in a hierarchical style makes finding a specific test very easy. This infrastructure provides pieces to take advantage of both Benchmark.js and Jasmine. By using ```jasmineBenchmark.run``` or ```jasmineBenchmark.runWhenReady``` any test is transformed in a benchmark: these helper functions are invoking the Benchmark.js under the hood and report the results in the UI next to the Jasmine reporter.
-3. Karma
+### Karma
 Karma has a really nice feature of capturing the console logs of all the connected browsers from all devices and redirecting them to a text file. After Karma is stopped a minimal processing is required to extract the results from the text file and save them in a json.
-4. engineering-flot
+### engineering-flot
 engineering-flot is used to present the trends.
+### git
+The results are being saved in a json file which is commited with the code in the same repo. This is not ideal, but it's a very cheap mechanism to track the progress and detect regression. The workflow is meant to save new results only when the user decides to while he has the freedom to run the benchmarks and compare the results as often as he wants to.
 
 
 ## How tos
 
 ### How to setup the infrastructure for a new repo
-1. Include these required files in ```karma.conf.js```:
+1. Make sure ```webcharts-development-settings``` is added as a dev dependency in ```package.json``` and installed.
+2. Include these required files in ```karma.conf.js```:
 ```js
 'node_modules/webcharts-development-settings/benchmark-infrastructure/benchmark.js'
 'node_modules/webcharts-development-settings/benchmark-infrastructure/jasmineBenchmark.js'
 'node_modules/webcharts-development-settings/benchmark-infrastructure/setupJasmine.js'
 ```
-2. Configure the karma server to log the output and be more tolerant with the slow tests. All the recommended settings can be applied in ```karma.conf.js``` like this:
+3. Configure the karma server to log the output and be more tolerant with the slow tests. All the recommended settings can be applied in ```karma.conf.js``` like this:
 ```js
 var setupKarma = require('./node_modules/webcharts-development-settings/benchmark-infrastructure/setupKarma.js');
 setupKarma(settings);
 ```
-3. Optionally add this helper scripts to the ```package.json``` file to speed up different operations:
+4. Optionally add this helper scripts to the ```package.json``` file to speed up different operations:
 ```js
 "benchmarks": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1 --benchmarks --browsers=Firefox,Chrome & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
 "benchmarksInteractive": "node node_modules/karma/bin/karma start --benchmarks & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
 "lastBenchmarkResultsToJson": "node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
 "saveLastBenchmarkResults": "node node_modules/webcharts-development-settings/benchmark-infrastructure/saveLastBenchmarkResults.js"
 ```
-4. Setup karma to treat the benchmarks as a different test suite. Don't mix the normal tests with the benchmarks.
+5. Setup karma to treat the benchmarks as a different test suite. Don't mix the normal tests with the benchmarks.
 ```js
 if (config.benchmarks) {
     settings.files = settings.files
@@ -58,13 +61,14 @@ if (config.benchmarks) {
         .concat(benchmarks);
 }
 ```
-5. Add a new rule to the .gitignore file to make sure you don't accidentally commit the files with temporary benchmark results:
+6. Add a new rule to the .gitignore file to make sure you don't accidentally commit the files with temporary benchmark results:
 ```
 lastBenchmarkResults.*
 ```
-6. Make sure the .npmignore will ignore the files keeking the temporary benchmark results and the saved ones:
+7. Make sure the .npmignore will ignore the files keeking the temporary benchmark results and the saved ones:
 ```
-lastBenchmarkResults.*
+lastBenchmarkResults.txt
+lastBenchmarkResults.json
 benchmarkResults.json
 ```
 
@@ -115,7 +119,7 @@ This command will run all the benchmarks in all the specified browsers and save 
 npm run benchmarksInteractive
 ```
 This command is starting karma configured with no browsers. You can connect from any device or browser and run the benchmarks.
-2. In order to store the results for comparison don't stop karma from the command line, but use access this address from browser to cleanly stop karma:
+2. In order to store the results for comparison don't stop karma from the command line, but access this address from any browser to cleanly stop karma:
 ```
 http://localhost:9876/stop
 ```
