@@ -24,7 +24,7 @@ This library is great running a series of benchmarks and returning  statisticall
 ### Jasmine
 The way Jasmine displays the tests in a hierarchical style makes finding a specific test very easy. This infrastructure provides pieces to take advantage of both Benchmark.js and Jasmine. By using ```jasmineBenchmark.run``` or ```jasmineBenchmark.runWhenReady``` any test is transformed in a benchmark: these helper functions are invoking the Benchmark.js under the hood and report the results in the UI next to the Jasmine reporter.
 ### Karma
-Karma has a really nice feature of capturing the console logs of all the connected browsers from all devices and redirecting them to a text file. After Karma is stopped a minimal processing is required to extract the results from the text file and save them in a json.
+Karma has a really nice feature of capturing the console logs of all the connected browsers from all devices and redirecting them to a text file. After Karma is stopped, a minimal processing is required to extract the results from the text file and save them in a json.
 ### engineering-flot
 engineering-flot is used to present the trends.
 ### git
@@ -78,7 +78,7 @@ if (config.benchmarks) {
 ```
 lastBenchmarkResults.*
 ```
-7. Make sure the .npmignore will ignore the files keeking the temporary benchmark results and the saved ones:
+7. Make sure the .npmignore will ignore the files keeping the temporary benchmark results and the saved ones:
 ```
 lastBenchmarkResults.txt
 lastBenchmarkResults.json
