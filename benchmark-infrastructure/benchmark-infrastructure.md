@@ -9,7 +9,7 @@ Supported features:
 * Running all benchmarks at once
 * Running the benchmarks selectively
 * Running the benchmarks from multiple devices and browsers
-* Saving the results for traking trends
+* Saving the results for tracking trends
 * Viewing the trends
 
 Features that are not supported and will not be supported in the near future:
@@ -54,25 +54,28 @@ Each benchmark result is a collection of key-value pairs like this:
 'node_modules/webcharts-development-settings/benchmark-infrastructure/jasmineBenchmark.js'
 'node_modules/webcharts-development-settings/benchmark-infrastructure/setupJasmine.js'
 ```
-3. Configure the karma server to log the output and be more tolerant with the slow tests. All the recommended settings can be applied in ```karma.conf.js``` like this:
-```js
-var setupKarma = require('./node_modules/webcharts-development-settings/benchmark-infrastructure/setupKarma.js');
-setupKarma(settings);
-```
-4. Optionally add this helper scripts to the ```package.json``` file to speed up different operations:
-```js
-"benchmarks": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1 --benchmarks --browsers=Firefox,Chrome & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
-"benchmarksInteractive": "node node_modules/karma/bin/karma start --benchmarks & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
-"lastBenchmarkResultsToJson": "node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
-"saveLastBenchmarkResults": "node node_modules/webcharts-development-settings/benchmark-infrastructure/saveLastBenchmarkResults.js"
-```
-5. Setup karma to treat the benchmarks as a different test suite. Don't mix the normal tests with the benchmarks.
+3. Setup karma to treat the benchmarks as a different test suite. Don't mix the normal tests with the benchmarks.
 ```js
 if (config.benchmarks) {
     settings.files = settings.files
         .concat(sources)
         .concat(benchmarks);
 }
+```
+4. Configure the karma server to log the output and be more tolerant with the slow tests. Don't apply these settings when running the normal test suite. All the recommended settings can be applied in ```karma.conf.js``` like this:
+```js
+if (config.benchmarks) {
+    // ...
+    var setupKarma = require('./node_modules/webcharts-development-settings/benchmark-infrastructure/setupKarma.js');
+    setupKarma(settings);
+}
+```
+5. Optionally add this helper scripts to the ```package.json``` file to speed up different operations:
+```js
+"benchmarks": "node node_modules/karma/bin/karma start --single-run --no-auto-watch --concurrency=1 --benchmarks --browsers=Firefox,Chrome & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
+"benchmarksInteractive": "node node_modules/karma/bin/karma start --benchmarks & node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
+"lastBenchmarkResultsToJson": "node node_modules/webcharts-development-settings/benchmark-infrastructure/lastBenchmarkResultsToJson.js",
+"saveLastBenchmarkResults": "node node_modules/webcharts-development-settings/benchmark-infrastructure/saveLastBenchmarkResults.js"
 ```
 6. Add a new rule to the .gitignore file to make sure you don't accidentally commit the files with temporary benchmark results:
 ```
@@ -120,7 +123,7 @@ karma --benchmarks
 ```
 
 ### How to run the benchmarks and keep the results for comparison
-The recommendation is to setup the ```package``` file as discribed above and use this command:
+The recommendation is to setup the ```package``` file as described above and use this command:
 ```console
 npm run benchmarks
 ```
