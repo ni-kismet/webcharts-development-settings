@@ -6,12 +6,14 @@
 
     var simulate = window.simulate;
 
-    function mouseEvent(type, sx, sy, cx, cy, button, detail, key) {
+    function mouseEvent(type, sx, sy, cx, cy, button, detail, key, deltaX, deltaY) {
         var evt;
         var e = {
             bubbles: true,
             cancelable: (type !== "mousemove"),
             view: window,
+            deltaX: deltaX,
+            deltaY: deltaY,
             detail: detail,
             screenX: sx,
             screenY: sy,
@@ -39,24 +41,21 @@
             e.metaKey = true;
         }
 
-        if (typeof (document.createEvent) === "function") {
-            evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent(type,
-                e.bubbles, e.cancelable, e.view, e.detail,
-                e.screenX, e.screenY, e.clientX, e.clientY,
-                e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                e.button, document.body.parentNode);
-        } else if (document.createEventObject) {
-            evt = document.createEventObject();
-            for (var prop in e) {
+        evt = new CustomEvent(type, e);
+
+        // setting properties that can't be set via CustomEvent constructor
+        for (var prop in e) {
+            var propertyNotSetViaCustomEventConstructor = evt[prop] == null && e[prop] != null;
+            if (propertyNotSetViaCustomEventConstructor) {
                 evt[prop] = e[prop];
             }
-            evt.button = {
-                0: 1,
-                1: 4,
-                2: 2
-            }[evt.button] || evt.button;
         }
+        /*if (deltaX != null) {
+            evt.deltaX = deltaX;
+        }
+        if (deltaY != null) {
+            evt.deltaY = deltaY;
+        }*/
 
         return evt;
     }
@@ -98,13 +97,17 @@
         dispatchEvent(el, evt);
     }
 
-    function simulateMouseWheel(el, x, y, deltaX) {
+    function simulateMouseWheel(el, x, y, deltaX, deltaY) {
         var bBox = el.getBoundingClientRect()
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("DOMMouseScroll", clickX, clickY, clickX, clickY, 0, deltaX);
+        // Different browsers or OSes are passing information about the scroll delta differently.
+        // Passing a numeric value to 'detail' is one of them. On MacOS the deltaY counts.
+        var detail = deltaY;
+
+        var evt = mouseEvent("DOMMouseScroll", clickX, clickY, clickX, clickY, 0, detail, undefined, deltaX, deltaY);
         dispatchEvent(el, evt);
     }
 
