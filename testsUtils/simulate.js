@@ -6,12 +6,14 @@
 
     var simulate = window.simulate;
 
-    function mouseEvent(type, sx, sy, cx, cy, button, detail, key) {
+    function mouseEvent(type, sx, sy, cx, cy, button, detail, key, deltaX, deltaY) {
         var evt;
         var e = {
             bubbles: true,
             cancelable: (type !== "mousemove"),
             view: window,
+            deltaX: deltaX,
+            deltaY: deltaY,
             detail: detail,
             screenX: sx,
             screenY: sy,
@@ -39,6 +41,8 @@
             e.metaKey = true;
         }
 
+        // These methods of creating events are obsolete.
+        // Note that the new CustomEvent is not playing well with jQuery.
         if (typeof (document.createEvent) === "function") {
             evt = document.createEvent("MouseEvents");
             evt.initMouseEvent(type,
@@ -56,6 +60,14 @@
                 1: 4,
                 2: 2
             }[evt.button] || evt.button;
+        }
+
+        // Setting properties that can't be set via initMouseEvent or createEventObject.
+        for (var prop in e) {
+            var propertyNotSetViaCustomEventConstructor = evt[prop] == null && e[prop] != null;
+            if (propertyNotSetViaCustomEventConstructor) {
+                evt[prop] = e[prop];
+            }
         }
 
         return evt;
@@ -98,13 +110,17 @@
         dispatchEvent(el, evt);
     }
 
-    function simulateMouseWheel(el, x, y, deltaX) {
+    function simulateMouseWheel(el, x, y, deltaX, deltaY) {
         var bBox = el.getBoundingClientRect()
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("DOMMouseScroll", clickX, clickY, clickX, clickY, 0, deltaX);
+        // Different browsers or OSes are passing information about the scroll delta differently.
+        // Passing a numeric value to 'detail' is one of them. On MacOS the deltaY counts.
+        var detail = deltaY;
+
+        var evt = mouseEvent("DOMMouseScroll", clickX, clickY, clickX, clickY, 0, detail, undefined, deltaX, deltaY);
         dispatchEvent(el, evt);
     }
 
