@@ -2,7 +2,7 @@
 
 Common settings and tools for all WebCharts repos
 
-* [Test utils](testUtils/testUtils.md)
+* [Tests utils](testsUtils/testUtils.md)
 * [Benchmark infrastructure](benchmark-infrastructure/benchmark-infrastructure.md)
 * (To be described: linting rules)
 * (To be moved here: build scripts)
