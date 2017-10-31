@@ -12,8 +12,8 @@
             bubbles: true,
             cancelable: (type !== "mousemove"),
             view: window,
-            //deltaX: deltaX,
-            //deltaY: deltaY,
+            deltaX: deltaX,
+            deltaY: deltaY,
             detail: detail,
             screenX: sx,
             screenY: sy,
@@ -41,6 +41,8 @@
             e.metaKey = true;
         }
 
+        // These methods of creating events are obsolete.
+        // Note that the new CustomEvent is not playing well with jQuery.
         if (typeof (document.createEvent) === "function") {
             evt = document.createEvent("MouseEvents");
             evt.initMouseEvent(type,
@@ -60,11 +62,11 @@
             }[evt.button] || evt.button;
         }
 
-        // setting properties that can't be set via CustomEvent constructor
+        // Setting properties that can't be set via initMouseEvent or createEventObject.
         for (var prop in e) {
             var propertyNotSetViaCustomEventConstructor = evt[prop] == null && e[prop] != null;
             if (propertyNotSetViaCustomEventConstructor) {
-                //evt[prop] = e[prop];
+                evt[prop] = e[prop];
             }
         }
 
