@@ -36,7 +36,6 @@
 
     function printColor(c) {
         if (c) {
-            // Don't use Array.from() because is not working with typed arrays in PhantomJS
             c = (c instanceof Array) ? c : [c[0], c[1], c[2], c[3]];
             return 'rgba(' + c.join() + ')';
         } else {
@@ -56,7 +55,6 @@
         return [r, g, b, a * 255];
     }
 
-    // Always pass to the second argument an Array becuase typed arrays don't have map and every functions
     function isClose(c1, c2) {
         var tolerance = 5,
             close = c2
@@ -70,5 +68,5 @@
     colors.getScaledPixelColor = getScaledPixelColor;
     colors.rgba = rgba;
     colors.isClose = isClose;
-    
+
 })();
