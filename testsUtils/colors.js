@@ -31,6 +31,70 @@
                     return result;
                 }
             };
+        },
+
+        toMatchPixelColor: function(util, customEqualityTesters) {
+            return {
+                compare: function(actual, expected) {
+                    if (expected === undefined) {
+                        expected = expected || [-1000, -1000, -999, -999]; //no color should match these values
+                    }
+
+                    var pixelData = actual,
+                        r = expected[0],
+                        g = expected[1],
+                        b = expected[2],
+                        a = expected[3],
+
+                        result = {};
+                    result.pass = matchPixelColor(pixelData, r, g, b, a);
+                    if (!result.pass) {
+                        result.message =
+                          'Expected [' + pixelData +
+                          '] to match [' + r + ',' + g + ',' + b + ',' + a + ']';
+                    }
+                    return result;
+                }
+            };
+        },
+
+        toContainPixelColor: function(util, customEqualityTesters) {
+            return {
+                compare: function(actual, expected) {
+                    if (expected === undefined) {
+                        expected = expected || [-1000, -1000, -999, -999]; //no color should match these values
+                    }
+
+                    var result = {};
+                    var i, i4, pixelData, r, g, b, a, actualLength;
+                    r = expected[0];
+                    g = expected[1];
+                    b = expected[2];
+                    a = expected[3];
+                    actualLength = actual.length >> 2; //fast divide by 4
+
+                    result.pass = false;
+                    pixelData = [];
+                    for (i = 0; i < actualLength; i = i + 4) {
+                        i4 = i * 4;
+                        pixelData[0] = actual[i4 + 0];
+                        pixelData[1] = actual[i4 + 1];
+                        pixelData[2] = actual[i4 + 2];
+                        pixelData[3] = actual[i4 + 3];
+                        result.pass = result.pass || matchPixelColor(pixelData, r, g, b, a);
+                        if (result.pass) {
+                            break;
+                        }
+                    }
+
+                    if (!result.pass) {
+                        result.message =
+                          'Expected pixelData[...' +
+                          '] to contain pixel color: [' + r + ',' + g + ',' + b + ',' + a + ']. Pixel index is: ' + i;
+                    }
+                    return result;
+                }
+            };
         }
     };
 
@@ -41,6 +105,10 @@
         } else {
             return 'undefined';
         }
+    }
+
+    function matchPixelColor(pixelData, r, g, b, a) {
+        return (pixelData[0] === r) && (pixelData[1] === g) && (pixelData[2] === b) && (pixelData[3] === a);
     }
 
     function getPixelColor(ctx, x, y) {
