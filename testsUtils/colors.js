@@ -6,6 +6,7 @@
 
     var colors = window.colors;
 
+    //see https://jasmine.github.io/2.0/custom_matcher.html
     var jasmineMatchers = {
         toFillPixel: function(util, customEqualityTesters) {
             return {
@@ -58,6 +59,32 @@
             };
         },
 
+        toMatchPixelColorWithError: function(util, customEqualityTesters) {
+            return {
+                compare: function(actual, expected) {
+                    if (expected === undefined) {
+                        expected = expected || [-1000, -1000, -999, -999, -1500]; //no color should match these values
+                    }
+
+                    var pixelData = actual,
+                        r = expected[0],
+                        g = expected[1],
+                        b = expected[2],
+                        a = expected[3],
+                        err = expected[4],
+
+                        result = {};
+                    result.pass = matchPixelColorWithError(pixelData, r, g, b, a, err);
+                    if (!result.pass) {
+                        result.message =
+                          'Expected [' + pixelData +
+                          '] to match [' + r + ',' + g + ',' + b + ',' + a + ']';
+                    }
+                    return result;
+                }
+            };
+        },
+
         toContainPixelColor: function(util, customEqualityTesters) {
             return {
                 compare: function(actual, expected) {
@@ -95,6 +122,25 @@
                     return result;
                 }
             };
+        },
+
+        toMatchCanvasArea: function(util, customEqualityTesters) {
+            return {
+                compare: function(actual, expected) {
+                    if (expected === undefined) {
+                        expected = [];
+                    }
+
+                    var result = {};
+                    result.pass = matchPixelDataArrays(actual, expected);
+                    if (!result.pass) {
+                        result.message =
+                          'Expected actual[...]' +
+                          ' to match expected[...]';
+                    }
+                    return result;
+                }
+            };
         }
     };
 
@@ -105,10 +151,6 @@
         } else {
             return 'undefined';
         }
-    }
-
-    function matchPixelColor(pixelData, r, g, b, a) {
-        return (pixelData[0] === r) && (pixelData[1] === g) && (pixelData[2] === b) && (pixelData[3] === a);
     }
 
     function getPixelColor(ctx, x, y) {
@@ -131,10 +173,55 @@
         return close;
     }
 
+    function matchPixelColor(pixelData, r, g, b, a) {
+        return (pixelData[0] === r) && (pixelData[1] === g) && (pixelData[2] === b) && (pixelData[3] === a);
+    }
+
+    function matchPixelColorWithError(pixelData, r, g, b, a, err) {
+        return (Math.abs(pixelData[0] - r) <= err) && (Math.abs(pixelData[1] - g) <= err) && (Math.abs(pixelData[2] - b) <= err) && (Math.abs(pixelData[3] - a) <= err);
+    }
+
+    function canvasData(canvas, x, y, width, height) {
+        return canvas.getContext('2d').getImageData(x, y, width, height).data;
+    }
+
+    function getEntireCanvasData(canvas) {
+        return canvasData(canvas, 0, 0, canvas.width, canvas.height);
+    }
+
+    //hexToRgb from https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    function matchPixelDataArrays(pixelData1, pixelData2) {
+        var sameValue = true;
+        if (pixelData1.length !== pixelData2.length) {
+            sameValue = false;
+        } else {
+            for (var i = 0; i < pixelData1.length; i++) {
+                if (pixelData1[i] !== pixelData2[i]) {
+                    sameValue = false;
+                    break;
+                }
+            }
+        }
+        return sameValue;
+    }
+
     colors.jasmineMatchers = jasmineMatchers;
     colors.getPixelColor = getPixelColor;
     colors.getScaledPixelColor = getScaledPixelColor;
     colors.rgba = rgba;
     colors.isClose = isClose;
+
+    colors.canvasData = canvasData;
+    colors.getEntireCanvasData = getEntireCanvasData;
+    colors.hexToRgb = hexToRgb;
 
 })();
