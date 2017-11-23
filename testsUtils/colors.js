@@ -219,7 +219,6 @@
     colors.getScaledPixelColor = getScaledPixelColor;
     colors.rgba = rgba;
     colors.isClose = isClose;
-
     colors.canvasData = canvasData;
     colors.getEntireCanvasData = getEntireCanvasData;
     colors.hexToRgb = hexToRgb;
