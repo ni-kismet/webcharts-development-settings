@@ -5,70 +5,82 @@
     window.simulate = {};
 
     var simulate = window.simulate;
+    const noButton = 0;
+    const leftButton = 1;
+    const buttonsToWhichMap = { 0: 0, 1: 1, 4: 2, 8: 3 };
+    const buttonsToButtonMap = { 0: undefined, 1: 0, 2: 1, 4: 2 };
 
-    function mouseEvent(type, sx, sy, cx, cy, button, detail, key, deltaX, deltaY) {
-        var evt;
-        var e = {
-            bubbles: true,
-            cancelable: (type !== "mousemove"),
-            view: window,
-            deltaX: deltaX,
-            deltaY: deltaY,
-            detail: detail,
-            screenX: sx,
-            screenY: sy,
-            clientX: cx,
-            clientY: cy,
-            pageX: cx,
-            pageY: cy,
-            ctrlKey: false,
-            altKey: false,
-            shiftKey: false,
-            metaKey: false,
-            button: button || 0,
-            relatedTarget: undefined
-        };
+    function mouseEvent(type, sx, sy, cx, cy, buttons, detail, key) {
+        buttons = (buttons != null) ? buttons : noButton;
+        var which = buttonsToWhichMap[buttons],
+            button = buttonsToButtonMap[buttons],
+            e = {
+                bubbles: true,
+                cancelable: (type !== 'mousemove'),
+                view: window,
+                detail: detail,
+                screenX: sx,
+                screenY: sy,
+                clientX: cx,
+                clientY: cy,
+                pageX: cx,
+                pageY: cy,
+                ctrlKey: false,
+                altKey: false,
+                shiftKey: false,
+                metaKey: false,
+                button: button,
+                buttons: buttons,
+                which: which,
+                relatedTarget: undefined
+            };
 
-        if (key === "ctrlKey") {
-            e.ctrlKey = true;
-        } else if (key === "altKey") {
-            e.altKey = true;
-        } else if (key === "shiftKey") {
-            e.shiftKey = true;
-        } else if (key === "shiftKey") {
-            e.shiftKey = true;
-        } else if (key === "metaKey") {
-            e.metaKey = true;
+        var keys = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'],
+            pressedKeyIndex = keys.indexOf(key);
+        if (pressedKeyIndex !== -1) {
+            e[key] = true;
         }
 
-        // These methods of creating events are obsolete.
-        // Note that the new CustomEvent is not playing well with jQuery.
-        if (typeof (document.createEvent) === "function") {
-            evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent(type,
-                e.bubbles, e.cancelable, e.view, e.detail,
-                e.screenX, e.screenY, e.clientX, e.clientY,
-                e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                e.button, document.body.parentNode);
-        } else if (document.createEventObject) {
-            evt = document.createEventObject();
-            for (var prop in e) {
-                evt[prop] = e[prop];
-            }
-            evt.button = {
-                0: 1,
-                1: 4,
-                2: 2
-            }[evt.button] || evt.button;
+        var evt = new MouseEvent(type, e);
+
+        return evt;
+    }
+
+    function wheelEvent(type, sx, sy, cx, cy, buttons, detail, key, deltaX, deltaY) {
+        buttons = (buttons != null) ? buttons : noButton;
+
+        var which = buttonsToWhichMap[buttons],
+            button = buttonsToButtonMap[buttons],
+            e = {
+                bubbles: true,
+                cancelable: (type !== 'mousemove'),
+                view: window,
+                deltaX: deltaX,
+                deltaY: deltaY,
+                detail: detail,
+                screenX: sx,
+                screenY: sy,
+                clientX: cx,
+                clientY: cy,
+                pageX: cx,
+                pageY: cy,
+                ctrlKey: false,
+                altKey: false,
+                shiftKey: false,
+                metaKey: false,
+                button: button,
+                buttons: buttons,
+                which: which,
+                relatedTarget: undefined
+            };
+
+        var keys = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'],
+            pressedKeyIndex = keys.indexOf(key);
+        if (pressedKeyIndex !== -1) {
+            e[key] = true;
         }
 
-        // Setting properties that can't be set via initMouseEvent or createEventObject.
-        for (var prop in e) {
-            var propertyNotSetViaCustomEventConstructor = evt[prop] == null && e[prop] != null;
-            if (propertyNotSetViaCustomEventConstructor) {
-                evt[prop] = e[prop];
-            }
-        }
+        var evt = new WheelEvent(type, e);
 
         return evt;
     }
@@ -80,38 +92,40 @@
         return evt;
     }
 
-    function simulateMouseDown(el, x, y, button) {
-        var bBox = el.getBoundingClientRect()
+    function simulateMouseDown(el, x, y, buttons) {
+        var bBox = el.getBoundingClientRect();
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("mousedown", clickX, clickY, clickX, clickY, button);
+        buttons = (buttons != null) ? buttons : leftButton;
+        var evt = mouseEvent('mousedown', clickX, clickY, clickX, clickY, buttons);
         dispatchEvent(el, evt);
     }
 
-    function simulateMouseMove(el, x, y, button) {
-        var bBox = el.getBoundingClientRect()
+    function simulateMouseMove(el, x, y, buttons) {
+        var bBox = el.getBoundingClientRect();
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("mousemove", clickX, clickY, clickX, clickY, button);
+        buttons = (buttons != null) ? buttons : leftButton;
+        var evt = mouseEvent('mousemove', clickX, clickY, clickX, clickY, buttons);
         dispatchEvent(el, evt);
     }
 
-    function simulateMouseUp(el, x, y, button) {
-        var bBox = el.getBoundingClientRect()
+    function simulateMouseUp(el, x, y, buttons) {
+        var bBox = el.getBoundingClientRect();
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("mouseup", clickX, clickY, clickX, clickY, button);
+        var evt = mouseEvent('mouseup', clickX, clickY, clickX, clickY, buttons);
         dispatchEvent(el, evt);
     }
 
     function simulateMouseWheel(el, x, y, deltaX, deltaY) {
-        var bBox = el.getBoundingClientRect()
+        var bBox = el.getBoundingClientRect();
 
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
@@ -120,38 +134,38 @@
         // Passing a numeric value to 'detail' is one of them. On MacOS the deltaY counts.
         var detail = deltaY;
 
-        var evt = mouseEvent("DOMMouseScroll", clickX, clickY, clickX, clickY, 0, detail, undefined, deltaX, deltaY);
+        var evt = wheelEvent('DOMMouseScroll', clickX, clickY, clickX, clickY, 0, detail, undefined, deltaX, deltaY);
         dispatchEvent(el, evt);
     }
 
-    function simulateDblclick(el, x, y, button) {
+    function simulateDblclick(el, x, y, buttons) {
         var bBox = el.getBoundingClientRect();
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("dblclick", clickX, clickY, clickX, clickY, button);
+        var evt = mouseEvent('dblclick', clickX, clickY, clickX, clickY, buttons);
         dispatchEvent(el, evt);
     }
 
-    function simulateClick(el, x, y, button, key) {
+    function simulateClick(el, x, y, buttons, key) {
         var bBox = el.getBoundingClientRect();
         var clickX = bBox.left + x;
         var clickY = bBox.top + y;
 
-        var evt = mouseEvent("click", clickX, clickY, clickX, clickY, button, undefined, key);
+        var evt = mouseEvent('click', clickX, clickY, clickX, clickY, buttons, undefined, key);
         dispatchEvent(el, evt);
     }
 
     function simulateTouchStart(el, x, y) {
-        sendTouchEvent(x, y, el, "touchstart");
+        sendTouchEvent(x, y, el, 'touchstart');
     }
 
     function simulateTouchMove(el, x, y) {
-        sendTouchEvent(x, y, el, "touchmove");
+        sendTouchEvent(x, y, el, 'touchmove');
     }
 
     function simulateTouchEnd(el, x, y) {
-        sendTouchEvent(x, y, el, "touchend");
+        sendTouchEvent(x, y, el, 'touchend');
     }
 
     function simulateTouchDrag(el, x,  y, deltaX, deltaY) {
@@ -173,7 +187,7 @@
         };
 
         var event;
-        if (typeof UIEvent === "function") {
+        if (typeof UIEvent === 'function') {
             event = new UIEvent(eventType)
 
         } else {
@@ -207,7 +221,7 @@
         }
 
         var event;
-        if (typeof UIEvent === "function") {
+        if (typeof UIEvent === 'function') {
             event = new UIEvent(eventType)
 
         } else {
