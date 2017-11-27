@@ -16,7 +16,7 @@
             button = buttonsToButtonMap[buttons],
             e = {
                 bubbles: true,
-                cancelable: (type !== "mousemove"),
+                cancelable: (type !== 'mousemove'),
                 view: window,
                 detail: detail,
                 screenX: sx,
@@ -36,7 +36,7 @@
             };
 
         var keys = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'],
-            pressedKeyIndex = keys.findIndex(key);
+            pressedKeyIndex = keys.indexOf(key);
         if (pressedKeyIndex !== -1) {
             e[key] = true;
         }
@@ -73,6 +73,12 @@
                 which: which,
                 relatedTarget: undefined
             };
+
+        var keys = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'],
+            pressedKeyIndex = keys.indexOf(key);
+        if (pressedKeyIndex !== -1) {
+            e[key] = true;
+        }
 
         var evt = new WheelEvent(type, e);
 
