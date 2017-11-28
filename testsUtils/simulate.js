@@ -5,48 +5,24 @@
     window.simulate = {};
 
     var simulate = window.simulate;
-    const noButton = 0;
-    const leftButton = 1;
-    const buttonsToWhichMap = { 0: 0, 1: 1, 4: 2, 8: 3 };
-    const buttonsToButtonMap = { 0: undefined, 1: 0, 2: 1, 4: 2 };
+    var noButton = 0;
+    var leftButton = 1;
+    var buttonsToWhichMap = { 0: 0, 1: 1, 4: 2, 8: 3 };
+    var buttonsToButtonMap = { 0: undefined, 1: 0, 2: 1, 4: 2 };
 
     function mouseEvent(type, sx, sy, cx, cy, buttons, detail, key) {
-        buttons = (buttons != null) ? buttons : noButton;
-        var which = buttonsToWhichMap[buttons],
-            button = buttonsToButtonMap[buttons],
-            e = {
-                bubbles: true,
-                cancelable: (type !== 'mousemove'),
-                view: window,
-                detail: detail,
-                screenX: sx,
-                screenY: sy,
-                clientX: cx,
-                clientY: cy,
-                pageX: cx,
-                pageY: cy,
-                ctrlKey: false,
-                altKey: false,
-                shiftKey: false,
-                metaKey: false,
-                button: button,
-                buttons: buttons,
-                which: which,
-                relatedTarget: undefined
-            };
-
-        var keys = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'],
-            pressedKeyIndex = keys.indexOf(key);
-        if (pressedKeyIndex !== -1) {
-            e[key] = true;
-        }
-
-        var evt = new MouseEvent(type, e);
-
+        var e = buildMouseEventOptions(type, sx, sy, cx, cy, buttons, detail, key, undefined, undefined),
+            evt = new MouseEvent(type, e);
         return evt;
     }
 
     function wheelEvent(type, sx, sy, cx, cy, buttons, detail, key, deltaX, deltaY) {
+        var e = buildMouseEventOptions(type, sx, sy, cx, cy, buttons, detail, key, deltaX, deltaY),
+            evt = new WheelEvent(type, e);
+        return evt;
+    }
+
+    function buildMouseEventOptions(type, sx, sy, cx, cy, buttons, detail, key, deltaX, deltaY) {
         buttons = (buttons != null) ? buttons : noButton;
 
         var which = buttonsToWhichMap[buttons],
@@ -80,9 +56,7 @@
             e[key] = true;
         }
 
-        var evt = new WheelEvent(type, e);
-
-        return evt;
+        return e;
     }
 
     function dispatchEvent(el, evt) {
@@ -175,33 +149,7 @@
     }
 
     function sendTouchEvent(x, y, element, eventType) {
-        var touchObj = {
-            identifier: Date.now(),
-            target: element,
-            pageX: x,
-            pageY: y,
-            radiusX: 2.5,
-            radiusY: 2.5,
-            rotationAngle: 10,
-            force: 0.5,
-        };
-
-        var event;
-        if (typeof UIEvent === 'function') {
-            event = new UIEvent(eventType)
-
-        } else {
-            event = document.createEvent('UIEvent');
-            event.initUIEvent(eventType, true, true);
-        }
-
-        event.touches = [touchObj];
-        event.targetTouches = [];
-        event.changedTouches = [touchObj];
-        event.shiftKey = true;
-
-        element.dispatchEvent(event);
-
+        sendTouchEvents([{x: x, y: y}], element, eventType);
     }
 
     function sendTouchEvents(coords, element, eventType) {
@@ -213,17 +161,18 @@
                 target: element,
                 pageX: coords[i].x,
                 pageY: coords[i].y,
+                clientX: pageXtoClientX(coords[i].x),
+                clientY: pageYtoClientY(coords[i].y),
                 radiusX: 2.5,
                 radiusY: 2.5,
                 rotationAngle: 10,
-                force: 0.5,
+                force: 0.5
             };
         }
 
         var event;
         if (typeof UIEvent === 'function') {
-            event = new UIEvent(eventType)
-
+            event = new UIEvent(eventType);
         } else {
             event = document.createEvent('UIEvent');
             event.initUIEvent(eventType, true, true);
@@ -235,6 +184,16 @@
         event.shiftKey = true;
 
         element.dispatchEvent(event);
+    }
+
+    function pageXtoClientX(pageX) {
+        var doc = document.documentElement;
+        return pageX - (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    }
+
+    function pageYtoClientY(pageY) {
+        var doc = document.documentElement;
+        return pageY - (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
     }
 
     simulate.mouseDown = simulateMouseDown;
