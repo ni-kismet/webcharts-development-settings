@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.6]
+### Changes ###
+- making the simulate function return the dispatched event(s)
+
 ## [1.0.5]
 ### Changes ###
 - calculating and setting the clientX and clientY to the touch events
@@ -23,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - deltaX and deltaY for simulateMouseWheel for simulating the Mac track pad
 
 
+[1.0.6]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.2...v1.0.3
