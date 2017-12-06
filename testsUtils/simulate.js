@@ -74,7 +74,7 @@
 
         buttons = (buttons != null) ? buttons : leftButton;
         var evt = mouseEvent('mousedown', clickX, clickY, clickX, clickY, buttons);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateMouseMove(el, x, y, buttons) {
@@ -85,7 +85,7 @@
 
         buttons = (buttons != null) ? buttons : leftButton;
         var evt = mouseEvent('mousemove', clickX, clickY, clickX, clickY, buttons);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateMouseUp(el, x, y, buttons) {
@@ -95,7 +95,7 @@
         var clickY = bBox.top + y;
 
         var evt = mouseEvent('mouseup', clickX, clickY, clickX, clickY, buttons);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateMouseWheel(el, x, y, deltaX, deltaY) {
@@ -109,7 +109,7 @@
         var detail = deltaY;
 
         var evt = wheelEvent('DOMMouseScroll', clickX, clickY, clickX, clickY, 0, detail, undefined, deltaX, deltaY);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateDblclick(el, x, y, buttons) {
@@ -118,7 +118,7 @@
         var clickY = bBox.top + y;
 
         var evt = mouseEvent('dblclick', clickX, clickY, clickX, clickY, buttons);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateClick(el, x, y, buttons, key) {
@@ -127,29 +127,31 @@
         var clickY = bBox.top + y;
 
         var evt = mouseEvent('click', clickX, clickY, clickX, clickY, buttons, undefined, key);
-        dispatchEvent(el, evt);
+        return dispatchEvent(el, evt);
     }
 
     function simulateTouchStart(el, x, y) {
-        sendTouchEvent(x, y, el, 'touchstart');
+        return sendTouchEvent(x, y, el, 'touchstart');
     }
 
     function simulateTouchMove(el, x, y) {
-        sendTouchEvent(x, y, el, 'touchmove');
+        return sendTouchEvent(x, y, el, 'touchmove');
     }
 
     function simulateTouchEnd(el, x, y) {
-        sendTouchEvent(x, y, el, 'touchend');
+        return sendTouchEvent(x, y, el, 'touchend');
     }
 
     function simulateTouchDrag(el, x,  y, deltaX, deltaY) {
-        simulateTouchStart(el, x, y);
-        simulateTouchMove(el, x + deltaX, y + deltaY);
-        simulateTouchEnd(el, x + deltaX, y + deltaY);
+        return [
+            simulateTouchStart(el, x, y),
+            simulateTouchMove(el, x + deltaX, y + deltaY),
+            simulateTouchEnd(el, x + deltaX, y + deltaY)
+        ];
     }
 
     function sendTouchEvent(x, y, element, eventType) {
-        sendTouchEvents([{x: x, y: y}], element, eventType);
+        return sendTouchEvents([{x: x, y: y}], element, eventType);
     }
 
     function sendTouchEvents(coords, element, eventType) {
@@ -184,6 +186,7 @@
         event.shiftKey = true;
 
         element.dispatchEvent(event);
+        return event;
     }
 
     function pageXtoClientX(pageX) {
