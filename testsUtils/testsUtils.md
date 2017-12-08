@@ -33,7 +33,8 @@ Returns the color of a pixel, specified by a canvas context and its xy position.
 
 * getScaledPixelColor(ctx, r, x, y)
 
-Returns the color of a pixel, specified by a canvas context and its xy position.
+Returns the color of a pixel, specified by a canvas context and its xy position,
+where x and y are multiplied by r, to account for scaling.
 
 * rgba(r, g, b, a)
 
