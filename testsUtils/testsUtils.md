@@ -27,23 +27,47 @@ simulate.click(eventHolder, 10, 20);
 
 Provides utility functions for testing the color of a pixel or area from a canvas:
 
-* getPixelColor
-* getScaledPixelColor
-* rgba
-* isClose
-* canvasData
-* getEntireCanvasData
-* hexToRgb
+* getPixelColor(ctx, x, y)
+
+Returns the color of a pixel, specified by a canvas context and its xy position.
+
+* getScaledPixelColor(ctx, r, x, y)
+
+Returns the color of a pixel, specified by a canvas context and its xy position.
+
+* rgba(r, g, b, a)
+
+Returns an array, made of the 'r', 'g', 'b', 'a' arguments.
+This is the same format as returned by a cnvCtxt.getImageData(x, y, 1, 1).data.
+
+* isClose(c1, c2)
+
+Returns true or false, depending on whether the two c1 and c2 colors are almost
+identical, using an error of 5 when comparing color components. The two colors
+are expected to be formatted as 4-element arrays (RGBA).
+
+* canvasData(canvas, x, y, width, height)
+
+Returns an array of pixels, where each pixel takes 4 elements of the array, using
+the RGBA format. The returned area is defined by an offset (x/y) and a size
+(width/height).
+
+* getEntireCanvasData(canvas)
+
+Returns an array of pixels, where each pixel takes 4 elements of the array, using
+the RGBA format.
+
+* hexToRgb(hex)
+
+Returns an array of 3 elements, RGB (without alpha), using the '#RRGGBB' format
+as argument.
+
 
 ## Jasmine matchers
 
 * toFillPixel
-* toMatchPixelColor
-* toMatchPixelColorWithError
-* toContainPixelColor
-* toMatchCanvasArea
 
-**toFillPixel** is a Jasmine matcher, used to test a particular pixel color of a
+This is a Jasmine matcher, used to test a particular pixel color of a
 plot. It expects a particular pixel from a plot to have a desired color.
 ```js
 var rgba = window.colors.rgba;
@@ -57,6 +81,10 @@ it('should draw a red pixel at x = 10 and y = 11', function() {
     expect(rgba(255,0,0,1)).toFillPixel(plot, 10, 11);
 });
 ```
+
+
+* toMatchPixelColor
+* toMatchPixelColorWithError
 
 The "other way around" approach of **toFillPixel**, is to use **toMatchPixelColor**
 and **toMatchPixelColorWithError** matchers. They are used to compare a pixel
@@ -81,6 +109,9 @@ it('should draw a canvas area on another canvas', function() {
 });
 ```
 
+
+* toContainPixelColor
+
 When there are chances that a particular tested canvas area, will slightly change
 in future versions, it may not be practical to specify a fixed pixel to verify
 its color. One approach is to look for an expected color in a given area or in
@@ -102,6 +133,8 @@ it('should draw a canvas area on another canvas', function() {
 });
 ```
 
+
+* toMatchCanvasArea
 There is also a matcher, **toMatchCanvasArea**, which allows comparing two canvas
 areas, pixel by pixel. It uses data returned by canvasData function. As seen in
 the example below, both calls to canvasData are made using the same canvas size.
