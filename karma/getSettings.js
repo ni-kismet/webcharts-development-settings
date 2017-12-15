@@ -1,8 +1,9 @@
 var module;
 
-module.exports.getDefaultSettings = function ({ config = {}, fileGoups = [], lintPatterns = ['sources/**/*.js', 'tests/**/*.js'], coveragePatterns = ['sources/**/*.js'] }) {
-    console.log(files);
-    console.log(devFiles);
+module.exports = function (config, fileGoups, lintPatterns, coveragePatterns) {
+    console.log(fileGoups);
+    console.log(lintPatterns);
+    console.log(coveragePatterns);
 
     var browsersMatrix = {
             'win': ['Edge', 'Firefox', 'Chrome'],
@@ -32,10 +33,7 @@ module.exports.getDefaultSettings = function ({ config = {}, fileGoups = [], lin
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'sources/**/*.js': ['eslint'],
-            'tests/**/*.js': ['eslint']
-        },
+        preprocessors: {},
 
         eslint: {
             stopOnError: config.stopOnEsLintError ? true : false,
@@ -84,16 +82,16 @@ module.exports.getDefaultSettings = function ({ config = {}, fileGoups = [], lin
         concurrency: Infinity
     };
 
+    fileGoups.forEach(function(fileGroup) {
+        settings.files = settings.files.concat(fileGroup);
+    });
+
+    lintPatterns.forEach(function(lintPattern) {
+        settings.preprocessors[lintPattern] = ['eslint'];
+    });
+
     if (config.coverage) {
-        settings.files = settings.files
-            .concat(cssFiles)
-            .concat(externalDependencies)
-            .concat(elementInfrastructure)
-            .concat(sources)
-            .concat(externalMaps)
-            .concat(elementRegistration)
-            .concat(tests);
-        var toBeInstrumented = ['sources/**/*.js'];
+        var toBeInstrumented = coveragePatterns;
         if (!settings.preprocessors) {
             settings.preprocessors = {};
         }
@@ -108,26 +106,8 @@ module.exports.getDefaultSettings = function ({ config = {}, fileGoups = [], lin
         settings.reporters.push('coveralls');
         settings.browsers = ['Chrome'];
     } else if (config.benchmarks) {
-        settings.files = settings.files
-            .concat(cssFiles)
-            .concat(externalDependencies)
-            .concat(elementInfrastructure)
-            .concat(sources)
-            .concat(externalMaps)
-            .concat(elementRegistration)
-            .concat(benchmarks);
-        var setupKarma = require('./node_modules/webcharts-development-settings/benchmark-infrastructure/setupKarma.js');
+        var setupKarma = require('./../benchmark-infrastructure/setupKarma.js');
         setupKarma(settings);
-    }
-    else {
-        settings.files = settings.files
-            .concat(cssFiles)
-            .concat(externalDependencies)
-            .concat(elementInfrastructure)
-            .concat(sources)
-            .concat(externalMaps)
-            .concat(elementRegistration)
-            .concat(tests);
     }
 
     return settings;
