@@ -1,20 +1,42 @@
 var module;
 
-module.exports = function (config, fileGoups, lintPatterns, coveragePatterns) {
-    console.log(fileGoups);
-    console.log(lintPatterns);
-    console.log(coveragePatterns);
+var browsersMatrix = {
+        'win': ['Edge', 'Firefox', 'Chrome'],
+        'linux': ['Firefox', 'Chrome'],
+        'mac': ['Safari', 'Firefox', 'Chrome']
+    },
+    isWin = /^win/.test(process.platform),
+    isLinux = /^linux/.test(process.platform),
+    isMac = /^darwin/.test(process.platform),
+    currentOSType = isWin ? 'win' : (isLinux ? 'linux' : 'mac'),
+    currentOSBrowsers = browsersMatrix[currentOSType];
 
-    var browsersMatrix = {
-            'win': ['Edge', 'Firefox', 'Chrome'],
-            'linux': ['Firefox', 'Chrome'],
-            'mac': ['Safari', 'Firefox', 'Chrome']
-        },
-        isWin = /^win/.test(process.platform),
-        isLinux = /^linux/.test(process.platform),
-        isMac = /^darwin/.test(process.platform),
-        currentOSType = isWin ? 'win' : (isLinux ? 'linux' : 'mac'),
-        currentOSBrowsers = browsersMatrix[currentOSType];
+function concatFiles(groups, names) {
+    return Object.keys(groups)
+        .filter(key => names.includes(key))
+        .map(key => groups[key])
+        .reduce((flat, group) => flat.concat(group), []);
+}
+
+module.exports = function (config, files) {
+    var currentConfigGroupNames;
+    if (config.testBuild) {
+        currentConfigGroupNames = files.karma.files;
+    } else if (config.benchmarks) {
+        currentConfigGroupNames = files.karma.benchmarkFiles;
+    } else if (config.coverage) {
+        currentConfigGroupNames = files.karma.coverageFiles;
+    } else {
+        currentConfigGroupNames = files.karma.files;
+    }
+
+    var filesToBeLoaded = concatFiles(files.groups, currentConfigGroupNames),
+        lintPatterns = concatFiles(files.groups, files.karma.lint),
+        coveragePatterns = concatFiles(files.groups, files.karma.coverage);
+
+    console.log('--filesToBeLoaded--\n', filesToBeLoaded, '\n');
+    console.log('--lintPatterns--\n', lintPatterns, '\n');
+    console.log('--coveragePatterns--\n', coveragePatterns, '\n');
 
     var settings = {
 
@@ -26,7 +48,7 @@ module.exports = function (config, fileGoups, lintPatterns, coveragePatterns) {
         frameworks: ['jasmine-jquery', 'jasmine'],
 
         // list of files / patterns to load in the browser
-        files: [],
+        files: filesToBeLoaded,
 
         // list of files to exclude
         exclude: [],
@@ -81,10 +103,6 @@ module.exports = function (config, fileGoups, lintPatterns, coveragePatterns) {
         // how many browser should be started simultaneous
         concurrency: Infinity
     };
-
-    fileGoups.forEach(function(fileGroup) {
-        settings.files = settings.files.concat(fileGroup);
-    });
 
     lintPatterns.forEach(function(lintPattern) {
         settings.preprocessors[lintPattern] = ['eslint'];
