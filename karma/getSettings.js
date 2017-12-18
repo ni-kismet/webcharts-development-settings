@@ -34,10 +34,6 @@ module.exports = function (config, files) {
         lintPatterns = concatFiles(files.groups, files.karma.lint),
         coveragePatterns = concatFiles(files.groups, files.karma.coverage);
 
-    console.log('--filesToBeLoaded--\n', filesToBeLoaded, '\n');
-    console.log('--lintPatterns--\n', lintPatterns, '\n');
-    console.log('--coveragePatterns--\n', coveragePatterns, '\n');
-
     var settings = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
