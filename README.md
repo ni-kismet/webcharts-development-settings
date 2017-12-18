@@ -4,5 +4,6 @@ Common settings and tools for all WebCharts repos
 
 * [Tests utils](testsUtils/testsUtils.md)
 * [Benchmark infrastructure](benchmark-infrastructure/benchmark-infrastructure.md)
-* (To be described: linting rules)
+* The linting rules used with ESLint are the recommended ones from [ESLint Rules](https://eslint.org/docs/rules/)
 * The [building scripts](buildingScripts.md) for webcharts repository
+
