@@ -27,7 +27,7 @@ module.exports = function (config, files) {
     } else if (config.coverage) {
         currentConfigGroupNames = files.karma.coverageFiles;
     } else {
-        currentConfigGroupNames = files.karma.files;
+        currentConfigGroupNames = files.karma.devFiles;
     }
 
     var filesToBeLoaded = concatFiles(files.groups, currentConfigGroupNames),
