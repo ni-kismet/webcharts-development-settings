@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.8]
+### Fixes ###
+- use devFiles for npm test
+
+## [1.0.7]
+### Changes ###
+- move webcharts karma, update_docs and gulpfile files inside webcharts-development-settings
+
 ## [1.0.6]
 ### Changes ###
 - making the simulate function return the dispatched event(s)
@@ -27,6 +35,8 @@ All notable changes to this project will be documented in this file.
 - deltaX and deltaY for simulateMouseWheel for simulating the Mac track pad
 
 
+[1.0.8]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.7...v1.0.8
+[1.0.7]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/ni-kismet/webcharts-development-settings/compare/v1.0.3...v1.0.4
