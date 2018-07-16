@@ -1,9 +1,9 @@
 var module;
 
 var browsersMatrix = {
-        'win': ['Edge', 'Firefox', 'Chrome'],
-        'linux': ['Firefox', 'Chrome'],
-        'mac': ['Safari', 'Firefox', 'Chrome']
+        'win': ['Edge', 'Firefox', 'ChromeHeadlessNoSandbox'],
+        'linux': ['Firefox', 'ChromeHeadlessNoSandbox'],
+        'mac': ['Safari', 'Firefox', 'ChromeHeadlessNoSandbox']
     },
     isWin = /^win/.test(process.platform),
     isLinux = /^linux/.test(process.platform),
@@ -97,7 +97,15 @@ module.exports = function (config, files) {
 
         // Concurrency level
         // how many browser should be started simultaneous
-        concurrency: Infinity
+        concurrency: Infinity,
+
+        // Custom launcher configurations
+        customLaunchers: {
+            ChromeHeadlessNoSandbox: {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox']
+            }
+        }
     };
 
     lintPatterns.forEach(function(lintPattern) {
@@ -118,7 +126,7 @@ module.exports = function (config, files) {
         });
         settings.reporters.push('coverage');
         settings.reporters.push('coveralls');
-        settings.browsers = ['Chrome'];
+        settings.browsers = ['ChromeHeadlessNoSandbox'];
     } else if (config.benchmarks) {
         var setupKarma = require('./../benchmark-infrastructure/setupKarma.js');
         setupKarma(settings);
